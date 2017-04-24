@@ -24,11 +24,18 @@ def user_login(request, *args, **kwargs):
         user_name = form.cleaned_data.get('username')
         user_obj = User.objects.get(username__iexact=user_name)
         login(request, user_obj)
-        if request.user.is_authenticated:
-            print("Login Successful")
+        # if request.user.is_authenticated:
+        #     print("Login Successful")
         return HttpResponseRedirect("/")
 
     context = {
         "form": form
     }
     return render(request, "accounts/login.html", context)
+
+def main(request):
+    if request.user.is_authenticated:
+        context = {
+            'login': True
+        }
+    return render(request, "main.html", context)
