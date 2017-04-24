@@ -9,14 +9,22 @@ from .key import (COOL_API_KEY, COOl_API_SECRET)
 from sdk.api.message import Message
 from sdk.exceptions import CoolsmsException
 
+# Receive User Model
 User = get_user_model()
 
-
-# Create your views here.
 def user_register(request, *args, **kwargs):
+    '''
+    Register User
+    :param request:
+    :param args:
+    :param kwargs:
+    :return:
+    '''
     if request.user.is_authenticated:
         raise Http404
+    # Get the User Creation Form
     form = UserCreationForm(request.POST or None)
+    # if the form is valid, redirect to the verifivation page
     if form.is_valid():
         form.save()
         return HttpResponseRedirect("/verify")
@@ -24,12 +32,13 @@ def user_register(request, *args, **kwargs):
     context = {
         "form" : form
     }
+    # Render form if the form is invalid
     return render(request, "accounts/register.html", context)
 
 
 def user_login(request, *args, **kwargs):
     '''
-    user login
+    User Login
     :param request:
     :param args:
     :param kwargs:
@@ -43,9 +52,17 @@ def user_login(request, *args, **kwargs):
     context = {
         "form": form
     }
+    # Render Login form if the form is invalid
     return render(request, "accounts/login.html", context)
 
 def main(request, *args, **kwargs):
+    '''
+    Main Page : Home Page
+    :param request:
+    :param args:
+    :param kwargs:
+    :return:
+    '''
     if request.user.is_authenticated:
         context = {
             'login': True
@@ -54,11 +71,24 @@ def main(request, *args, **kwargs):
     return render(request, "main.html", {'login': False})
 
 def user_logout(request, *args, **kwargs):
+    '''
+    Logout User
+    :param request:
+    :param args:
+    :param kwargs:
+    :return:
+    '''
     logout(request)
     return HttpResponseRedirect("/login")
 
 
 def sendSMS(phone_number, activation_number):
+    '''
+    Send SMS message using Coolsms REST API SDK 2.0
+    :param phone_number: user's phone number
+    :param activation_number: activation code from user's information
+    :return: None
+    '''
     api_key = COOL_API_KEY
     api_secret = COOl_API_SECRET
 
@@ -84,8 +114,15 @@ def sendSMS(phone_number, activation_number):
         print("Error Message : %s" % e.msg)
 
 
-
 def user_verify(request, *args, **kwargs):
+    '''
+    Verify User's Action
+    :param request:
+    :param args:
+    :param kwargs:
+    :return:
+    '''
+    # Prevent from verifying as active user
     if request.user.is_active:
         return HttpResponseRedirect("/success_already")
     else:
@@ -98,18 +135,28 @@ def user_verify(request, *args, **kwargs):
 
                 user_obj=User.objects.filter(phone_number=phone_number).first()
                 if user_obj is None:
-                    # Invalid number
+                    # if it's invalid number, show error message
+                    messages.error(request, "Not a valid number. Try Again!")
                     return render(request, "accounts/verify.html", {"sent": False})
                 else:
-                    # send!
+                    # if it's valid number, send SMS
+                    # user_activation_profile = UserActivationProfile
                     activation_number = user_obj.user_activation_profile.first().key
                     sendSMS(phone_number, activation_number)
 
                 return render(request, "accounts/verify.html", {"sent": True})
         return render(request, "accounts/verify.html", {"sent": False})
 
-# Activate User
+
 def user_activate(request, code= None,*args, **kwargs):
+    '''
+    Activate User
+    :param request:
+    :param code:
+    :param args:
+    :param kwargs:
+    :return:
+    '''
     if code is not None:
         activation_qs = UserActivationProfile.objects.filter(key=code)
         if activation_qs.exists() and activation_qs.count() == 1:
@@ -125,12 +172,20 @@ def user_activate(request, code= None,*args, **kwargs):
             return render(request, "accounts/verify.html", {"sent": True})
 
 def success(request):
-    if request.user.is_authenticated:
-        return render(request, "accounts/success.html")
-    else:
-        raise Http404
+    '''
+    Success Page
+    :param request:
+    :return:
+    '''
+    return render(request, "accounts/success.html")
+
 
 def success_already(request):
+    '''
+    User is already activated
+    :param request:
+    :return:
+    '''
     if request.user.is_authenticated:
         return render(request, "accounts/success_already.html",{})
     else:

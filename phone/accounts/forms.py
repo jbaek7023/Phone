@@ -11,6 +11,9 @@ from .models import USERNAME_REGEX
 User = get_user_model()
 
 class UserLoginForm(forms.Form):
+    '''
+    User LoginForm
+    '''
     username = forms.CharField(
         label= 'User Name',
         validators=[

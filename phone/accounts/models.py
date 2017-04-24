@@ -45,6 +45,9 @@ class MyUserManager(BaseUserManager):
 
 
 class MyUser(AbstractBaseUser):
+    '''
+    UserModel
+    '''
     username = models.CharField(
                 max_length=255,
                 validators=[
@@ -96,6 +99,9 @@ import string
 from django.conf import settings
 
 class UserActivationProfile(models.Model):
+    '''
+    Store user's activation key in different model
+    '''
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_activation_profile")
     # ForeignKey or OneToOne ?? :(
     key = models.CharField(max_length=120, unique=True)
@@ -108,7 +114,17 @@ class UserActivationProfile(models.Model):
     def __unicode__(self):
         return self.user.username
 
+
 def post_user_model_receiver(sender, instance, created, *args, **kwargs):
+    '''
+    Create UserActivationProfile when UserModel is made
+    :param sender: MyUser
+    :param instance: MyUser
+    :param created:
+    :param args:
+    :param kwargs:
+    :return:
+    '''
     if created:
         try:
             UserActivationProfile.objects.create(user=instance)
