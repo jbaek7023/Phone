@@ -1,4 +1,4 @@
-from django.contrib.auth import login, get_user_model
+from django.contrib.auth import login, get_user_model, logout
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import UserCreationForm, UserChangeForm, UserLoginForm
@@ -39,3 +39,7 @@ def main(request):
             'login': True
         }
     return render(request, "main.html", context)
+
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect("/login")
