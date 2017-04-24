@@ -6,13 +6,19 @@
 
 <form method="POST" action=".">
     {% csrf_token %}
-    <input type="text" name="activation_key">
+    <br><br>
     {% if sent is False %}
-    <input type="submit" value="Send Verification Code">
+    <input type="submit" class="btn btn-info btn-lg" value="Send Verification Code">
     {% else %}
-    <input type="submit" value="Verify">
-    <p>we've sent a message to your phone</p>
+    <div class="row">
+        <div class="col-lg-2 col-lg-offset-5">
+            <input type="text" class="form-control"  name="activation_key">
 
+            <input type="submit" class="btn btn-info btn-lg" value="Verify">
+        </div>
+
+
+    </div>
     {% endif %}
 </form>
 

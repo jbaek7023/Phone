@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Welcome to the homepage</h1>
-
+<!-- Header -->
+            <h1>Signup and verify your phone</h1>
+            <h3>인증하기위해 회원가입을 해주세요</h3>
+            <br>
+            <a href="{% url 'register' %}" class="btn btn-dark btn-lg">Sign Up</a>
+            <a href="{% url 'login' %}" class="btn btn-dark btn-lg">Sign In</a>
 {% endblock %}

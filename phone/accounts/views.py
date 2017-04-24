@@ -34,19 +34,19 @@ def user_login(request, *args, **kwargs):
     }
     return render(request, "accounts/login.html", context)
 
-def main(request):
+def main(request, *args, **kwargs):
     if request.user.is_authenticated:
         context = {
             'login': True
         }
     return render(request, "main.html", context)
 
-def user_logout(request):
+def user_logout(request, *args, **kwargs):
     logout(request)
     return HttpResponseRedirect("/login")
 
 # Login Required
-def user_verify(request):
+def user_verify(request, *args, **kwargs):
     if not request.user.is_authenticated:
         return Http404
     else:

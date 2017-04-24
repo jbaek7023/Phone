@@ -1,5 +1,8 @@
-<form method="POST" action=".">
+<form id="my_form" method="POST" action=".">
     {% csrf_token %}
+    <br>
     {{ form.as_p }}
-    <input type="submit" value="Submit">
+    <a href="{% url 'main' %}" class="btn btn-dark btn-lg">back</a>
+
+    <a class="btn btn-dark btn-lg" href="javascript:{}" onclick="document.getElementById('my_form').submit(); return false;">Submit</a>
 </form>

@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
 from accounts.views import (
     user_register,
@@ -25,10 +27,13 @@ from accounts.views import (
 )
 
 urlpatterns = [
-    url(r'^$', main),
+    url(r'^$', main, name="main"),
     url(r'^admin/', admin.site.urls),
-    url(r'^register/$', user_register),
-    url(r'^login/$', user_login),
-    url(r'^logout/$', user_logout),
-    url(r'^verify/$', user_verify),
+    url(r'^register/$', user_register, name="register"),
+    url(r'^login/$', user_login, name="login"),
+    url(r'^logout/$', user_logout, name="logout"),
+    url(r'^verify/$', user_verify, name="verify"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
