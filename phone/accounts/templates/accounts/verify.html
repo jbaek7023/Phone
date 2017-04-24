@@ -8,7 +8,12 @@
     {% csrf_token %}
     <br><br>
     {% if sent is False %}
-    <input type="submit" class="btn btn-info btn-lg" value="Send Verification Code">
+    <div class="row">
+        <div class="col-lg-2 col-lg-offset-5">
+            <input type="text" class="form-control"  name="phone_number">
+            <input type="submit" class="btn btn-info btn-lg" value="Send SMS">
+        </div>
+    </div>
     {% else %}
     <div class="row">
         <div class="col-lg-2 col-lg-offset-5">

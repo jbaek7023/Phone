@@ -98,15 +98,17 @@ from django.conf import settings
 
 
 class UserActivationProfile(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_activation_profile")
     # ForeignKey or OneToOne ?? :(
-    key = models.CharField(max_length=120)
+    key = models.CharField(max_length=120, unique=True)
 
     def save(self, *args, **kwargs):
         # Generate 6 digits random characters or numbers
         self.key= ''.join(random.choice(string.digits) for _ in range(6))
-        print(self.key)
         super(UserActivationProfile, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.user.username
 
 def post_user_model_receiver(sender, instance, created, *args, **kwargs):
     if created:

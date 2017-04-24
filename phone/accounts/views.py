@@ -4,7 +4,8 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import UserCreationForm, UserChangeForm, UserLoginForm
 from .models import UserActivationProfile
-
+from django.contrib import messages
+from .key import (COOL_API_KEY, COOl_API_SECRET)
 import sys
 from sdk.api.message import Message
 from sdk.exceptions import CoolsmsException
@@ -50,16 +51,16 @@ def user_logout(request, *args, **kwargs):
     return HttpResponseRedirect("/login")
 
 # Login Required
-def sendSMS():
-    api_key = settings.COOL_API_KEY
-    api_secret = settings.COOl_API_SECRET
+def sendSMS(phone_number, activation_number):
+    api_key = COOL_API_KEY
+    api_secret = COOl_API_SECRET
 
     ## 4 params(to, from, type, text) are mandatory. must be filled
     params = dict()
     params['type'] = 'sms'  # Message type ( sms, lms, mms, ata )
-    params['to'] = '01000000000'  # Recipients Number '01000000000,01000000001'
-    params['from'] = '01000000000'  # Sender number
-    params['text'] = 'Test Message'  # Message
+    params['to'] = phone_number  # Recipients Number '01000000000,01000000001'
+    params['from'] = '01030962827'  # Sender number
+    params['text'] = 'Your Verification Code: '+activation_number  # Message
 
     cool = Message(api_key, api_secret)
     try:
@@ -75,7 +76,6 @@ def sendSMS():
         print("Error Code : %s" % e.code)
         print("Error Message : %s" % e.msg)
 
-    sys.exit()
 
 
 def user_verify(request, *args, **kwargs):
@@ -87,10 +87,21 @@ def user_verify(request, *args, **kwargs):
             if code is not None:
                 return HttpResponseRedirect("/verify/{c}".format(c=code))
             else:
-                sendSMS()
+                phone_number = request.POST.get("phone_number", None)
+
+                user_obj=User.objects.filter(phone_number=phone_number).first()
+                if user_obj is None:
+                    # Invalid number
+                    return render(request, "accounts/verify.html", {"sent": False})
+                else:
+                    # send!
+                    activation_number = user_obj.user_activation_profile.first().key
+                    sendSMS(phone_number, activation_number)
+
                 return render(request, "accounts/verify.html", {"sent": True})
         return render(request, "accounts/verify.html", {"sent": False})
 
+# Activate User
 def user_activate(request, code= None,*args, **kwargs):
     if code is not None:
         activation_qs = UserActivationProfile.objects.filter(key=code)
@@ -102,6 +113,9 @@ def user_activate(request, code= None,*args, **kwargs):
             user_obj.is_active = True
             user_obj.save()
             return HttpResponseRedirect("/success")
+        else:
+            messages.error(request, "Not a valid number. Try Again!")
+            return render(request, "accounts/verify.html", {"sent": True})
 
 def success(request):
     return render(request, "accounts/success.html")
