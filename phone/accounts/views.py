@@ -21,8 +21,7 @@ def user_register(request, *args, **kwargs):
 def user_login(request, *args, **kwargs):
     form = UserLoginForm(request.POST or None)
     if form.is_valid():
-        user_name = form.cleaned_data.get('username')
-        user_obj = User.objects.get(username__iexact=user_name)
+        user_obj = form.cleaned_data.get('user_obj')
         login(request, user_obj)
         # if request.user.is_authenticated:
         #     print("Login Successful")

@@ -25,9 +25,16 @@ class UserLoginForm(forms.Form):
         username = self.cleaned_data.get("username")
         password = self.cleaned_data.get("password")
         # Built in Authentication
-        user_obj = authenticate(username=username, password=password)
-        if not user_obj:
-            raise forms.ValidationError("Invalid username or password")
+
+        user_obj = User.objects.filter(username=username).first()
+        if user_obj is None:
+            raise forms.ValidationError("Invalid username or password.")
+        else:
+            if not user_obj.check_password(password):
+                raise forms.ValidationError("Invalid username or password.")
+            if not user_obj.is_active:
+                raise forms.ValidationError("Inactive user; Please verify your account using SMS!")
+        self.cleaned_data["user_obj"] = user_obj
         return super(UserLoginForm, self).clean(*args, **Kwargs)
 
 
@@ -57,6 +64,8 @@ class UserCreationForm(forms.ModelForm):
         user.set_password(self.cleaned_data["password1"])
         user.is_active = False
         # create a new user hash for activating email.
+
+
 
         if commit:
             user.save()
