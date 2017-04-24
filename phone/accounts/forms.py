@@ -10,6 +10,16 @@ from .models import USERNAME_REGEX
 # Get User Model
 User = get_user_model()
 
+class UserLoginForm(forms.Form):
+    username = forms.CharField(
+        label= 'User Name',
+        validators=[
+            RegexValidator(
+                regex=USERNAME_REGEX,
+                message='Username must be Alpahnumeric or contain any of the following: ". @ + -" ',
+                code='invalid_username'
+            )])
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
 
 # REFERENCE: Django Documentation
