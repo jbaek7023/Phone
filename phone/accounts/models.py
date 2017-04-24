@@ -4,7 +4,7 @@ from django.contrib.auth.models import (
 )
 from django.core.validators import RegexValidator
 from django.db import models
-
+from django.db.models.signals import post_save
 USERNAME_REGEX = '^[a-zA-Z0-9.+-]*$'
 
 # Reference: Django Documentation
@@ -90,3 +90,29 @@ class MyUser(AbstractBaseUser):
         "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
         return True
+
+import random
+import string
+from django.conf import settings
+
+
+
+class UserActivationProfile(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    # ForeignKey or OneToOne ?? :(
+    key = models.CharField(max_length=120)
+
+    def save(self, *args, **kwargs):
+        # Generate 6 digits random characters or numbers
+        self.key= ''.join(random.choice(string.digits) for _ in range(6))
+        print(self.key)
+        super(UserActivationProfile, self).save(*args, **kwargs)
+
+def post_user_model_receiver(sender, instance, created, *args, **kwargs):
+    if created:
+        try:
+            UserActivationProfile.objects.create(user=instance)
+        except:
+            pass
+
+post_save.connect(post_user_model_receiver, sender=settings.AUTH_USER_MODEL)

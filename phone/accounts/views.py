@@ -1,4 +1,5 @@
 from django.contrib.auth import login, get_user_model, logout
+from django.http import Http404
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import UserCreationForm, UserChangeForm, UserLoginForm
@@ -42,3 +43,10 @@ def main(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect("/login")
+
+def user_verify(request):
+    if not request.user.is_authenticated:
+        return Http404
+    else:
+
+        return render(request, "verify.html". context)

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import MyUser
+from .models import MyUser, UserActivationProfile
 
 # Reference: Django Documentation
 # https://docs.djangoproject.com/en/1.11/topics/auth/customizing/
@@ -34,6 +34,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(MyUser, UserAdmin)
+admin.site.register(UserActivationProfile)
 
 
 # ... and, since we're not using Django's built-in permissions,
