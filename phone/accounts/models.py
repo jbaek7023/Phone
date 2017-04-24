@@ -95,8 +95,6 @@ import random
 import string
 from django.conf import settings
 
-
-
 class UserActivationProfile(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_activation_profile")
     # ForeignKey or OneToOne ?? :(
