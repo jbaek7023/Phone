@@ -14,6 +14,10 @@ class UserModelTestCase(TestCase):
         password = '0493037333')
 
     def test_simple_user_model(self):
+        '''
+        User can register and retrieve user by matching email
+        :return:
+        '''
         obj = MyUser.objects.get(email='jason@gmail.com')
         self.assertEqual(obj.username, 'jason')
         self.assertEqual(obj.phone_number, '01098972020')

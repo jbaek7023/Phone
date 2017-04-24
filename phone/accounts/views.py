@@ -2,20 +2,20 @@ from django.contrib.auth import login, get_user_model, logout
 from django.http import Http404
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .forms import UserCreationForm, UserChangeForm, UserLoginForm
+from .forms import UserCreationForm, UserLoginForm
 from .models import UserActivationProfile
 from django.contrib import messages
 from .key import (COOL_API_KEY, COOl_API_SECRET)
-import sys
 from sdk.api.message import Message
 from sdk.exceptions import CoolsmsException
-from django.conf import settings
 
 User = get_user_model()
 
 
 # Create your views here.
 def user_register(request, *args, **kwargs):
+    if request.user.is_authenticated:
+        raise Http404
     form = UserCreationForm(request.POST or None)
     if form.is_valid():
         form.save()
@@ -28,6 +28,13 @@ def user_register(request, *args, **kwargs):
 
 
 def user_login(request, *args, **kwargs):
+    '''
+    user login
+    :param request:
+    :param args:
+    :param kwargs:
+    :return:
+    '''
     form = UserLoginForm(request.POST or None)
     if form.is_valid():
         user_obj = form.cleaned_data.get('user_obj')
@@ -50,7 +57,7 @@ def user_logout(request, *args, **kwargs):
     logout(request)
     return HttpResponseRedirect("/login")
 
-# Login Required
+
 def sendSMS(phone_number, activation_number):
     api_key = COOL_API_KEY
     api_secret = COOl_API_SECRET
@@ -118,7 +125,10 @@ def user_activate(request, code= None,*args, **kwargs):
             return render(request, "accounts/verify.html", {"sent": True})
 
 def success(request):
-    return render(request, "accounts/success.html")
+    if request.user.is_authenticated:
+        return render(request, "accounts/success.html")
+    else:
+        raise Http404
 
 def success_already(request):
     if request.user.is_authenticated:
