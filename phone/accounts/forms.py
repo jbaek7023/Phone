@@ -21,6 +21,16 @@ class UserLoginForm(forms.Form):
             )])
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
+    def clean(self, *args, **Kwargs):
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+        # Built in Authentication
+        user_obj = authenticate(username=username, password=password)
+        if not user_obj:
+            raise forms.ValidationError("Invalid username or password")
+        return super(UserLoginForm, self).clean(*args, **Kwargs)
+
+
 
 # REFERENCE: Django Documentation
 class UserCreationForm(forms.ModelForm):
