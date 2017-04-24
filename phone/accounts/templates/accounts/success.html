@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Header -->
+            <h1>You've Successfully verified your phone</h1>
+            <h3>인증성공!</h3>
+            <br>
+
+            <a href="{% url 'main' %}" class="btn btn-dark btn-lg">Back to Main</a>
+            <a href="{% url 'logout' %}" class="btn btn-dark btn-lg">Logout</a>
+
+
+{% endblock %}

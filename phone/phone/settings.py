@@ -125,3 +125,6 @@ STATICFILES_DIR = [
     os.path.join(BASE_DIR, "static"),
 ]
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_f")
+
+COOL_API_KEY = 'NCSL37B2UKDEAQPZ'
+COOl_API_SECRET = '47WBVRYCNY0JSLUHAYVFNJNCTTAY5BSV'

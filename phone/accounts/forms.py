@@ -32,8 +32,8 @@ class UserLoginForm(forms.Form):
         else:
             if not user_obj.check_password(password):
                 raise forms.ValidationError("Invalid username or password.")
-            if not user_obj.is_active:
-                raise forms.ValidationError("Inactive user; Please verify your account using SMS!")
+            # if not user_obj.is_active:
+            #     raise forms.ValidationError("Inactive user; Please verify your account using SMS!")
         self.cleaned_data["user_obj"] = user_obj
         return super(UserLoginForm, self).clean(*args, **Kwargs)
 
@@ -48,7 +48,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email',)
+        fields = ('username', 'email', 'phone_number')
 
     def clean_password2(self):
         # Check that the two password entries match

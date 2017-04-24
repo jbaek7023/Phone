@@ -23,7 +23,10 @@ from accounts.views import (
     user_login,
     main,
     user_logout,
-    user_verify
+    user_verify,
+    user_activate,
+    success_already,
+    success
 )
 
 urlpatterns = [
@@ -33,6 +36,9 @@ urlpatterns = [
     url(r'^login/$', user_login, name="login"),
     url(r'^logout/$', user_logout, name="logout"),
     url(r'^verify/$', user_verify, name="verify"),
+    url(r'^verify/(?P<code>[0-9].*)/$', user_activate, name="activate"),
+    url(r'^success_already/$', success_already, name="success_already"),
+    url(r'^success/$', success, name="success"),
 ]
 
 if settings.DEBUG:
