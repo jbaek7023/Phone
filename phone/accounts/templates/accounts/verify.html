@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Verify your phone number!</h1>
+
+<form method="POST" action=".">
+    {% csrf_token %}
+    <input type="text" name="activation_key">
+    {% if sent is False %}
+    <input type="submit" value="Send Verification Code">
+    {% else %}
+    <input type="submit" value="Verify">
+    <p>we've sent a message to your phone</p>
+
+    {% endif %}
+</form>
+
+{% endblock %}

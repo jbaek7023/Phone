@@ -3,6 +3,7 @@ from django.http import Http404
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import UserCreationForm, UserChangeForm, UserLoginForm
+from .models import UserActivationProfile
 
 User = get_user_model()
 
@@ -44,9 +45,27 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect("/login")
 
+# Login Required
 def user_verify(request):
     if not request.user.is_authenticated:
         return Http404
     else:
+        if request.method == "POST":
+            # Send CoolSMS
+            # sendCoolSMS()
+            code = request.POST.get("activation_key", None)
+            print(code)
+            activation_qs = UserActivationProfile.objects.filter(key=code)
+            if activation_qs.exists() and activation_qs.count() ==1:
+                activation_obj = activation_qs.first()
 
-        return render(request, "verify.html". context)
+                # activation obj has user as a foreign key
+                user_obj = activation_obj.user
+                user_obj.is_active = True
+                user_obj.save()
+
+            return render(request, "accounts/verify.html", {"sent" : True})
+        return render(request, "accounts/verify.html", {"sent": False})
+
+def sendCoolSMS(self):
+    pass
